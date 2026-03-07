@@ -8,4 +8,8 @@ datasources:
     url: http://tempo:3200
     jsonData:
       httpMethod: GET
-
+      grpcUrl: "tempo:9095"
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false

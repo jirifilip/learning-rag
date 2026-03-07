@@ -1,5 +1,6 @@
 server:
   http_listen_port: 3200
+  grpc_listen_port: 9095
 
 distributor:
   receivers:
@@ -9,13 +10,24 @@ distributor:
         grpc:
 
 ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
   trace_idle_period: 10s
   max_block_bytes: 1_000_000
   max_block_duration: 5m
-
 
 storage:
   trace:
     backend: local
     local:
-      path: /tmp/tempo
+      path: /tmp/tempo/traces
+    wal:
+      path: /tmp/tempo/wal
+
+overrides:
+  defaults:
+    ingestion:
+      max_traces_per_user: 10000
