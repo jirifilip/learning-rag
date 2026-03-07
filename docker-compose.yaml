@@ -1,0 +1,27 @@
+services:
+  tempo:
+    image: grafana/tempo:latest
+    command:
+      - "-config.file"
+      - "/etc/tempo.yaml"
+    volumes:
+      - "./deployment/tempo/config.yaml:/etc/tempo.yaml"
+    ports:
+      - "3200:3200"
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    volumes:
+      - ./deployment/otel-collector/config.yaml:/etc/otel-collector.yaml
+    ports:
+      - "4318:4318"
+    depends_on:
+      - tempo
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - tempo
