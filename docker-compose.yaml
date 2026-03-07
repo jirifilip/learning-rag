@@ -1,14 +1,8 @@
 services:
-  tempo:
-    image: grafana/tempo:latest
-    command:
-      - "-config.file"
-      - "/etc/tempo.yaml"
-    volumes:
-      - "./deployment/tempo/config.yaml:/etc/tempo.yaml"
+  jaeger:
+    image: jaegertracing/all-in-one:latest
     ports:
-      - "3200:3200"
-      - "9095:9095"
+      - "16686:16686"
 
   otel-collector:
     image: otel/opentelemetry-collector:latest
@@ -18,7 +12,7 @@ services:
     ports:
       - "4318:4318"
     depends_on:
-      - tempo
+      - jaeger
 
   grafana:
     image: grafana/grafana:latest
@@ -28,7 +22,7 @@ services:
       - ./deployment/grafana/provisioning:/etc/grafana/provisioning
       - grafana-storage:/var/lib/grafana
     depends_on:
-      - tempo
+      - jaeger
 
 volumes:
   grafana-storage:
