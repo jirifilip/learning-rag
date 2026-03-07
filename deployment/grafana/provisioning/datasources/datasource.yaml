@@ -8,3 +8,10 @@ datasources:
     url: http://jaeger:16686
     jsonData:
       httpMethod: GET
+
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
