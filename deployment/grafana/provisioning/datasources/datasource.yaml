@@ -6,3 +6,6 @@ datasources:
     uid: tempo
     access: proxy
     url: http://tempo:3200
+    jsonData:
+      httpMethod: GET
+
