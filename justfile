@@ -2,8 +2,8 @@ set shell := ["powershell.exe", "-c"]
 
 
 monitoring-destroy:
-    docker compose down -v
+    docker compose -f deployment/monitoring/monitoring.docker-compose.yaml down -v
 
 monitoring:
-    docker compose down
-    docker compose up
+    docker compose -f deployment/monitoring/monitoring.docker-compose.yaml down
+    docker compose -f deployment/monitoring/monitoring.docker-compose.yaml up

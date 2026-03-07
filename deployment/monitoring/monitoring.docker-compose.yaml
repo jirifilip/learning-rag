@@ -6,7 +6,7 @@ services:
     ports:
       - "16686:16686"
     volumes:
-      - ./deployment/jaeger/config.yaml:/etc/jaeger/config.yaml
+      - ./jaeger/config.yaml:/etc/jaeger/config.yaml
       - jaeger-data:/data
 
   prometheus:
@@ -15,7 +15,7 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yaml"
       - "--storage.tsdb.path=/prometheus"
     volumes:
-      - ./deployment/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
@@ -24,7 +24,7 @@ services:
     image: otel/opentelemetry-collector:latest
     command: [ "--config=/etc/otel-collector.yaml" ]
     volumes:
-      - ./deployment/otel-collector/config.yaml:/etc/otel-collector.yaml
+      - ./otel-collector/config.yaml:/etc/otel-collector.yaml
     ports:
       - "4318:4318"
       - "8889:8889"
@@ -37,7 +37,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./deployment/grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/provisioning:/etc/grafana/provisioning
       - grafana-storage:/var/lib/grafana
     depends_on:
       - jaeger
