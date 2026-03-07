@@ -1,8 +1,13 @@
 services:
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/jaeger:2.0.0
+    user: "root"
+    command: ["--config", "/etc/jaeger/config.yaml"]
     ports:
       - "16686:16686"
+    volumes:
+      - ./deployment/jaeger/config.yaml:/etc/jaeger/config.yaml
+      - jaeger-data:/data
 
   otel-collector:
     image: otel/opentelemetry-collector:latest
@@ -26,3 +31,4 @@ services:
 
 volumes:
   grafana-storage:
+  jaeger-data:

@@ -1,0 +1,35 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+
+exporters:
+  jaeger_storage_exporter:
+    trace_storage: badger_storage
+
+extensions:
+  jaeger_storage:
+    backends:
+      badger_storage:
+        badger:
+          ephemeral: false
+          directories:
+            keys: "/data/keys"
+            values: "/data/values"
+  jaeger_query:
+    storage:
+      traces: badger_storage
+
+service:
+  extensions: [jaeger_storage, jaeger_query]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger_storage_exporter]
