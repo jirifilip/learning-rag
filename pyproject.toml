@@ -13,6 +13,7 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.40.0",
     "opentelemetry-instrumentation-fastapi>=0.61b0",
     "opentelemetry-sdk>=1.40.0",
+    "pydantic-ai>=0.8.1",
 ]
 
 [project.scripts]

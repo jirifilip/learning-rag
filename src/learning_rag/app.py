@@ -5,6 +5,7 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from pydantic_ai import Agent
 
 resource = Resource.create({
     "service.name": "learning-rag"
@@ -23,6 +24,13 @@ FastAPIInstrumentor().instrument_app(app)
 tracer = trace.get_tracer(__name__)
 
 
+agent = Agent(
+    "openai:gpt-5-nano",
+    output_type=str,
+    system_prompt="Answer questions like a bored programmer in short sentences."
+)
+
+
 @app.get("/")
 async def root() -> dict[str, str]:
     return {"message": "Hello World"}
@@ -39,3 +47,16 @@ async def test_trace() -> dict[str, str]:
 
 
     return {"message": "Created spans."}
+
+
+@app.post("/ask")
+async def ask(question: str) -> dict[str, str]:
+    with tracer.start_as_current_span("llm_call") as span_llm_call:
+        result = await agent.run(question)
+
+        span_llm_call.set_attribute("input_tokens", result.usage().input_tokens)
+        span_llm_call.set_attribute("output_tokens", result.usage().output_tokens)
+        span_llm_call.set_attribute("question", question)
+        span_llm_call.set_attribute("output", result.output)
+
+    return {"result": result.output}
