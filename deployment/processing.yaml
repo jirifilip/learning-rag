@@ -1,0 +1,14 @@
+- name: transcript
+  module: transcriber
+  listen: ingested-queue
+  publish: ready-to-embed-queue
+  replicas: 5
+  additional_properties:
+    hello: world
+
+- name: transcript-embedding
+  module: embedder
+  listen: ready-to-embed-queue
+  replicas: 2
+  additional_properties:
+    model: small
