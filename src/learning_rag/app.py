@@ -1,8 +1,13 @@
 import os
+from typing import Annotated
 
+import aio_pika
 import logfire
-from fastapi import FastAPI
+from aio_pika.abc import AbstractRobustChannel
+from fastapi import FastAPI, Depends
 from pydantic_ai import Agent
+
+from learning_rag.dependencies import get_rabbitmq_client
 
 os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "http://localhost:4318"
 
@@ -35,6 +40,17 @@ async def test_trace() -> dict[str, str]:
 
 
     return {"message": "Created spans."}
+
+
+@app.post("/test-rabbitmq")
+async def test_rabbitmq(rabbit_channel: Annotated[AbstractRobustChannel, Depends(get_rabbitmq_client)]) -> dict[str, str]:
+    with logfire.span("testing_rabbit_mq") as span_rabbitmq:
+        await rabbit_channel.default_exchange.publish(
+            aio_pika.Message(body='{"hello": "world"}'.encode()),
+            routing_key="hello_world_queue"
+        )
+
+    return {"message": "Message sent."}
 
 
 @app.post("/ask")
