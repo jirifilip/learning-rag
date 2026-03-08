@@ -6,9 +6,7 @@ from aio_pika.abc import AbstractRobustChannel
 
 async def get_rabbitmq_client() -> AsyncGenerator[AbstractRobustChannel, None]:
     connection = await aio_pika.connect_robust("amqp://guest:guest@localhost")
-    channel = await connection.channel()
 
-    try:
+    async with connection:
+        channel = await connection.channel()
         yield channel
-    finally:
-        await connection.close()

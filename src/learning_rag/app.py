@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 import aio_pika
@@ -44,10 +45,13 @@ async def test_trace() -> dict[str, str]:
 
 @app.post("/test-rabbitmq")
 async def test_rabbitmq(rabbit_channel: Annotated[AbstractRobustChannel, Depends(get_rabbitmq_client)]) -> dict[str, str]:
+    queue_name = "hello_world_queue"
+    await rabbit_channel.declare_queue(queue_name)
+
     with logfire.span("testing_rabbit_mq") as span_rabbitmq:
         await rabbit_channel.default_exchange.publish(
             aio_pika.Message(body='{"hello": "world"}'.encode()),
-            routing_key="hello_world_queue"
+            routing_key=queue_name
         )
 
     return {"message": "Message sent."}
