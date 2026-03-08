@@ -1,3 +1,8 @@
+- name: ingestion-video
+  module: ingester-video
+  listen: ingest-video-queue
+  publish: ingested-queue
+
 - name: transcript
   module: transcriber
   listen: ingested-queue
