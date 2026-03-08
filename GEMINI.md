@@ -29,7 +29,6 @@ Currently, it provides a foundational FastAPI application instrumented with OTel
 ### Prerequisites
 - Install `uv` and `just`.
 - Docker and Docker Compose installed for monitoring.
-- We are using Windows and Powershell.
 
 ### Commands
 - **Install Dependencies**: `uv sync`
