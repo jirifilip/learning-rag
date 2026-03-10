@@ -1,5 +1,6 @@
 import os
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from typing import Annotated
 
 import aio_pika
@@ -18,10 +19,20 @@ logfire.instrument_pydantic_ai()
 app = FastAPI()
 logfire.instrument_fastapi(app)
 
+@dataclass
+class Clothing:
+    neck_type: str
+    color: str
+
 agent = Agent(
     "openai:gpt-5-nano",
     output_type=str,
     system_prompt="Answer questions like a bored programmer in short sentences."
+)
+agent_structured = Agent(
+    "openai:gpt-5-nano",
+    output_type=Clothing,
+    system_prompt="You are a modiste extracting clothing from a user query."
 )
 
 
@@ -61,3 +72,9 @@ async def test_rabbitmq(rabbit_channel: Annotated[AbstractRobustChannel, Depends
 async def ask(question: str) -> dict[str, str]:
     result = await agent.run(question)
     return {"result": result.output}
+
+
+@app.post("/ask-structure")
+async def ask_structured(clothing_question: str) -> Clothing:
+    clothing = await agent_structured.run(clothing_question)
+    return clothing.output
