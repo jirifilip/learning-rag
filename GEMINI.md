@@ -12,17 +12,17 @@ Currently, it provides a foundational FastAPI application instrumented with OTel
 - **Task Runner**: [just](https://github.com/casey/just)
 - **Observability**: OpenTelemetry (Python SDK), Jaeger (Tracing backend), OTel Collector, Grafana.
 - **Infrastructure**: Docker Compose (for the monitoring stack).
+- **Observability**: OpenTelemetry (Python SDK), Jaeger (Tracing backend), OTel Collector, Grafana, Langfuse (LLM Tracing).
 
 ## Key Directories
-- `src/learning_rag/`: Main source code.
-  - `app.py`: FastAPI application entry point with OTel instrumentation.
+...
 - `deployment/`: Configuration files for infrastructure services.
   - `monitoring/`: Monitoring stack configuration.
     - `otel-collector/`: OpenTelemetry Collector configuration.
     - `jaeger/`: Jaeger tracing backend configuration.
     - `prometheus/`: Prometheus metrics configuration.
     - `grafana/`: Grafana dashboards and data sources.
-    - `monitoring.docker-compose.yaml`: Orchestrates the monitoring stack.
+    - `monitoring.docker-compose.yaml`: Orchestrates the monitoring stack (including Langfuse).
 
 ## Building and Running
 
@@ -32,12 +32,17 @@ Currently, it provides a foundational FastAPI application instrumented with OTel
 
 ### Commands
 - **Install Dependencies**: `uv sync`
-- **Start Monitoring Stack**: `just monitoring` (Starts Jaeger, Prometheus, OTel Collector, and Grafana).
+- **Start Monitoring Stack**: `just monitoring` (Starts Jaeger, Prometheus, OTel Collector, Grafana, and Langfuse).
 - **Run Application (Dev Mode)**: `uv run fastapi dev src/learning_rag/app.py`
 - **Build/Package**: `uv build`
 
 ## Architecture & Observability
 The application is instrumented with OpenTelemetry to export traces via OTLP (HTTP) to a local OTel Collector (port 4318). The Collector then forwards these traces to Jaeger (port 16686) for storage. Traces can be visualized and queried in Grafana (port 3000).
+
+Langfuse is available at port 4000 for LLM-specific tracing and monitoring.
+- **URL**: http://localhost:4000
+- **Admin**: admin@admin.com / admin
+
 
 ## Development Conventions
 - **Observability First**: All new features should be instrumented with OpenTelemetry spans where appropriate.
