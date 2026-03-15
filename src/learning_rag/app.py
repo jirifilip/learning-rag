@@ -59,7 +59,7 @@ async def test_rabbitmq(rabbit_channel: Annotated[AbstractRobustChannel, Depends
     queue_name = "hello_world_queue"
     await rabbit_channel.declare_queue(queue_name)
 
-    with logfire.span("testing_rabbit_mq") as span_rabbitmq:
+    with logfire.span("testing_rabbit_mq"):
         await rabbit_channel.default_exchange.publish(
             aio_pika.Message(body='{"hello": "world"}'.encode()),
             routing_key=queue_name
